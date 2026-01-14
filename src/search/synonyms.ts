@@ -75,18 +75,25 @@ export const SYNONYMS: Record<string, string[]> = {
 /**
  * Expand tokens with their synonyms
  * @param tokens - Array of normalized tokens from query
- * @returns Array of original tokens plus all their synonyms
+ * @returns Object with expanded tokens and set of original tokens
  */
-export function expandWithSynonyms(tokens: string[]): string[] {
-    const expanded = new Set(tokens)
+export function expandWithSynonyms(tokens: string[]): {
+    tokens: string[];
+    originalTokens: Set<string>;
+} {
+    const expanded = new Set(tokens);
+    const originalTokens = new Set(tokens);
 
     for (const token of tokens) {
         if (SYNONYMS[token]) {
             for (const syn of SYNONYMS[token]) {
-                expanded.add(syn)
+                expanded.add(syn);
             }
         }
     }
 
-    return Array.from(expanded)
+    return {
+        tokens: Array.from(expanded),
+        originalTokens,
+    };
 }

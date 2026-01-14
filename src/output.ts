@@ -90,14 +90,18 @@ export function formatSearchResults(
 ): string {
   const lines: string[] = [];
 
+  // Find best score for normalization (relative-to-best display)
+  const bestScore = results.length > 0 ? Math.max(...results.map(r => r.score)) : 1;
+
   for (const result of results) {
     const path = `${color(result.server, colors.cyan)}/${color(result.tool.name, colors.green)}`;
 
     let line = path;
 
-    // Add score if requested
+    // Add score if requested (normalized relative to best match)
     if (withScores) {
-      const scoreStr = color(`[${(result.score * 100).toFixed(0)}%]`, colors.dim);
+      const normalizedScore = bestScore > 0 ? (result.score / bestScore) * 100 : 0;
+      const scoreStr = color(`[${normalizedScore.toFixed(0)}%]`, colors.dim);
       line = `${scoreStr} ${line}`;
     }
 
